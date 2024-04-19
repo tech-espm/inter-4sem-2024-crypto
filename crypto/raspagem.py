@@ -25,11 +25,13 @@
 # avançadas do sistema" e, por fim, em "Variáveis de Ambiente".
 import sys
 import time
+import sql
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from config import url
 
 def extrair_float(texto):
 	try:
@@ -39,37 +41,35 @@ def extrair_float(texto):
 
 		texto = texto.replace(',', '')
 
-		return float(texto)
+		return texto
 	except:
 		return 0
 
 driver = webdriver.Chrome()
-driver.get('https://coinmarketcap.com/en/')
+driver.get(url)
 
 linhas = WebDriverWait(driver, 20).until(
 	EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'table.sc-14cb040a-3 tbody tr'))
 )
 
-dados = []
+idleitura = sql.criarLeitura()
 
 for linha in linhas:
 	celulas = linha.find_elements(By.CSS_SELECTOR, 'td')
 	try:
-		nome = celulas[2].find_element(By.CSS_SELECTOR, '.kKpPOn')
-		sigla = celulas[2].find_element(By.CSS_SELECTOR, '.iqdbQL')
-		dados.append({
-			'nome': nome.text,
-			'sigla': sigla.text,
-			'valor': extrair_float(celulas[3].text)
-		})
+		nome = celulas[2].find_element(By.CSS_SELECTOR, '.kKpPOn').text
+		sigla = celulas[2].find_element(By.CSS_SELECTOR, '.iqdbQL').text
+		valor = extrair_float(celulas[3].text)
 	except:
 		spans = celulas[2].find_elements(By.CSS_SELECTOR, 'span')
-		dados.append({
-			'nome': spans[1].text,
-			'sigla': spans[2].text,
-			'valor': extrair_float(celulas[3].text)
-		})
+		nome = spans[1].text
+		sigla = spans[2].text
+		valor = extrair_float(celulas[3].text)
 
-print(dados)
+	idcurrency = sql.obter_idcurrency(sigla)
+	if idcurrency == None:
+		idcurrency = sql.criarCurrency(nome, sigla)
+	sql.criarRanking(idleitura, idcurrency, valor)
+#print(dados)
 
 driver.close()
