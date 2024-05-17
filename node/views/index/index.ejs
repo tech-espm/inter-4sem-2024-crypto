@@ -11,8 +11,12 @@
 				<div class="card-body">
 					<form id="form">
 						<div class="form-group">
-							<label for="data">Data</label>
-							<input id="data" name="data" class="form-control" type="date" value="<%= ano %>-<%= mes %>-<%= dia %>" />
+							<label for="coin">Crypto</label>
+							<select multiple name="coin" id="coin" style="display: none;">
+								<% moedas.forEach(moeda => { %>
+									<option value="<%= moeda.idcurrency %>"><%= moeda.nome %></option>
+								<% }); %>
+							</select>
 						</div>
 		
 						<button type="submit" class="btn btn-primary">Listar</button>
@@ -29,6 +33,8 @@
 
 </div>
 
+<%- contentFor("espaco-rodape") %>
+
 <script src="/public/js/jquery-validate/jquery.validate.min.js"></script>
 <script src="/public/js/jquery-validate/additional-methods.min.js"></script>
 <script src="/public/js/jquery-validate/localization/messages_pt_BR.min.js"></script>
@@ -36,6 +42,16 @@
 
 <script type="text/javascript">
 	"use strict";
+	let coin = $("#coin").filterMultiSelect({
+		placeholderText: "Nada Selecionado",
+		filterText: "Filtro",
+		selectAllText: "Selecionar Tudo",
+		labelText: "",
+		selectionLimit: 0,
+		caseSensitive: false,
+		allowEnablingAndDisabling: false,
+	});
+	// 
 
 	$("#form").validate({
 		rules: {
@@ -53,7 +69,16 @@
 
 		try {
 
-			let response = await fetch("/obterDados");
+			let selecao = JSON.parse(coin.getSelectedOptionsAsJson()).coin;
+			let response = await fetch("/obterDados", {
+				method: "POST",
+				body: JSON.stringify({
+					selecao: selecao
+				}),
+				headers: {
+					"content-type": "application/json"
+				}
+			});
 
 			if (response.ok) {
 
@@ -62,30 +87,50 @@
 				let div = document.getElementById("div-grafico");
 				div.innerHTML = '<canvas id="grafico-barras" style="height: 50vh;"></canvas>';
 
-				let labels = [], data = [];
-
 				let dados = await response.json();
 				if (!dados || !dados.length) {
-					Swal.fire("Erro", "Sem dados na data especificada!", "error");
+					Swal.fire("Erro", "Sem dados para as moedas escolhidas!", "error");
 					return;
 				}
 
-				for (let i = 0; i < dados.length; i++) {
-					labels.push(dados[i].dia);
-					data.push(dados[i].valor);
+				const datasets = [];
+				const labels = [];
+
+				dados.forEach(dadosMoeda => {
+					if (!dadosMoeda || !dadosMoeda.length) {
+						return;
+					}
+
+					if (!labels.length) {
+						for (let i = 0; i < dadosMoeda.length; i++) {
+							labels.push(dadosMoeda[i].data);
+						}
+					}
+
+					const valores = new Array(dadosMoeda.length);
+					for (let i = 0; i < dadosMoeda.length; i++) {
+						valores[i] = dadosMoeda[i].valor;
+					}
+
+					datasets.push({
+						label: dadosMoeda[0].sigla,
+						backgroundColor: "#F31C06",
+						hoverBackgroundColor: "#F31C06",
+						borderColor: "#F31C06",
+						data: valores,
+					});
+				});
+
+				if (!datasets.length) {
+					Swal.fire("Erro", "Sem dados para as moedas escolhidas!", "error");
+					return;
 				}
 
 				let grafico = new Chart(document.getElementById("grafico-barras"), {
-					type: "bar",
+					type: "line",
 					data: {
 						labels: labels,
-						datasets: [{
-							label: "Valor",
-							backgroundColor: "#4e73df",
-							hoverBackgroundColor: "#2e59d9",
-							borderColor: "#4e73df",
-							data: data,
-						}],
+						datasets: datasets,
 					},
 					options: {
 						maintainAspectRatio: false,
@@ -156,3 +201,7 @@
 	atualizarDados();
 
 </script>
+
+<%- contentFor("espaco-head") %>
+<link rel="stylesheet" href="/public/js/multiselect/filter_multi_select.css" />
+<script src="/public/js/multiselect/filter-multi-select-bundle.min.js"></script>

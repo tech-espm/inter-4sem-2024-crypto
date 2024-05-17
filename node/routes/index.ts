@@ -6,11 +6,17 @@ class IndexRoute {
 
 		let mes = hoje.getMonth() + 1;
 		let dia = hoje.getDate();
+		let moedas: any[];
+
+		await app.sql.connect(async sql => {
+			moedas = await sql.query("SELECT idcurrency, nome FROM currency");
+		});
 
 		let opcoes = {
 			ano: hoje.getFullYear(),
 			mes: (mes < 10 ? "0" + mes : mes),
-			dia: (dia < 10 ? "0" + dia : dia)
+			dia: (dia < 10 ? "0" + dia : dia),
+			moedas: moedas
 		};
 
 		res.render("index/index", opcoes);
@@ -24,19 +30,22 @@ class IndexRoute {
 		res.render("index/sobre", opcoes);
 	}
 
+	@app.http.post()
 	public async obterDados(req: app.Request, res: app.Response) {
-		let dados = [
-			{ dia: "10/09", valor: 80 },
-			{ dia: "11/09", valor: 92 },
-			{ dia: "12/09", valor: 90 },
-			{ dia: "13/09", valor: 101 },
-			{ dia: "14/09", valor: 105 },
-			{ dia: "15/09", valor: 100 },
-			{ dia: "16/09", valor: 64 },
-			{ dia: "17/09", valor: 78 },
-			{ dia: "18/09", valor: 93 },
-			{ dia: "19/09", valor: 110 }
-		];
+		let selecao: number[] = req.body?.selecao || [];
+		let dados: any[] = [];
+
+		await app.sql.connect(async sql => {
+			for (let i = 0; i < selecao.length; i++) {
+				const result = await sql.query(`SELECT date_format(l.data, '%d/%m/%Y') data, IFNULL(r.valor, 0) valor, c.sigla FROM leitura l
+					INNER JOIN currency c on c.idcurrency = ?
+					LEFT JOIN ranking r on r.idleitura = l.idleitura AND r.idcurrency = c.idcurrency
+					ORDER BY l.data DESC
+					LIMIT 10`, selecao[i]);
+
+				dados.push(result);
+			}
+		});
 
 		res.json(dados);
 	}
