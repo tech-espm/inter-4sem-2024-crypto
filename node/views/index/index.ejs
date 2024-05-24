@@ -1,6 +1,12 @@
-﻿<div class="container-fluid">
+﻿<style>
+	.branco {
+		color: white;
+	}
+</style>
 
-	<h1>
+<div class="container-fluid">
+
+	<h1 class="branco">
 		Projeto
 	</h1>
 	
@@ -28,7 +34,9 @@
 	</div>
 
 	<div class="card shadow my-4">
-		<div class="card-body" id="div-grafico"></div>
+		<div class="card-body" id="div-grafico">
+			<div class="text-center">Escolha os cripto ativos e clique em "Listar" para analisar os dados.</div>
+		</div>
 	</div>
 
 </div>
@@ -95,6 +103,15 @@
 
 				const datasets = [];
 				const labels = [];
+				const cores = [
+					"red",
+					"blue",
+					"green",
+					"magenta",
+					"purple",
+					"orange",
+					"black"
+				];
 
 				dados.forEach(dadosMoeda => {
 					if (!dadosMoeda || !dadosMoeda.length) {
@@ -112,11 +129,12 @@
 						valores[i] = dadosMoeda[i].valor;
 					}
 
+					const cor = cores[datasets.length % cores.length];
 					datasets.push({
 						label: dadosMoeda[0].sigla,
-						backgroundColor: "#F31C06",
-						hoverBackgroundColor: "#F31C06",
-						borderColor: "#F31C06",
+						backgroundColor: cor,
+						hoverBackgroundColor: cor,
+						borderColor: cor,
 						data: valores
 					});
 				});
@@ -197,8 +215,6 @@
 			Swal.fire("Erro", "Erro ao listar os dados: " + ex.message, "error");
 		}
 	}
-
-	atualizarDados();
 
 </script>
 
