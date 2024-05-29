@@ -49,7 +49,7 @@ driver = webdriver.Chrome()
 driver.get(url)
 
 linhas = WebDriverWait(driver, 20).until(
-	EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'table.sc-14cb040a-3 tbody tr'))
+	EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'table.sc-ae0cff98-3 tbody tr'))
 )
 
 idleitura = sql.criarLeitura()
@@ -57,8 +57,8 @@ idleitura = sql.criarLeitura()
 for linha in linhas:
 	celulas = linha.find_elements(By.CSS_SELECTOR, 'td')
 	try:
-		nome = celulas[2].find_element(By.CSS_SELECTOR, '.kKpPOn').text
-		sigla = celulas[2].find_element(By.CSS_SELECTOR, '.iqdbQL').text
+		nome = celulas[2].find_element(By.CSS_SELECTOR, '.ehyBa-d').text
+		sigla = celulas[2].find_element(By.CSS_SELECTOR, '.dhNyQP').text
 		valor = extrair_float(celulas[3].text)
 	except:
 		spans = celulas[2].find_elements(By.CSS_SELECTOR, 'span')
