@@ -38,13 +38,18 @@ class IndexRoute {
 		await app.sql.connect(async sql => {
 			for (let i = 0; i < selecao.length; i++) {
 				const result = await sql.query(`SELECT * FROM (
-					SELECT date_format(l.data, '%d/%m/%Y') data, IFNULL(r.valor, 0) valor, c.sigla FROM leitura l
-					INNER JOIN currency c on c.idcurrency = ?
-					LEFT JOIN ranking r on r.idleitura = l.idleitura AND r.idcurrency = c.idcurrency
-					ORDER BY l.data DESC
-					LIMIT 10
-				) tmp
-				ORDER BY tmp.data ASC`, selecao[i]);
+    					SELECT 
+    					    l.data AS original_data, 
+    					    date_format(l.data, '%d/%m/%Y') AS data, 
+    					    IFNULL(r.valor, 0) AS valor, 
+    					    c.sigla 
+    					FROM leitura l
+    					INNER JOIN currency c ON c.idcurrency = ?
+    					LEFT JOIN ranking r ON r.idleitura = l.idleitura AND r.idcurrency = c.idcurrency
+    					ORDER BY l.data DESC
+    					LIMIT 10
+						) tmp
+						ORDER BY tmp.original_data;`, selecao[i]);
 
 				dados.push(result);
 			}
