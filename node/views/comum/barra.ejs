@@ -1,11 +1,89 @@
-<!--
-    Barra padrão do Bootstrap
+<style>
+    nav {
+        margin: 27px auto;
+        position: relative;
+        width: 210px;
+        height: 50px;
+        background-color: #2f3235;
+        border-radius: 1rem;
+        font-size: 0;
+    }
 
-    https://getbootstrap.com/docs/4.6/components/navbar/
--->
+    nav a {
+        line-height: 50px;
+        height: 100%;
+        font-size: 15px;
+        display: inline-block;
+        position: relative;
+        z-index: 1;
+        text-decoration: none;
+        text-transform: uppercase;
+        text-align: center;
+        color: white;
+        cursor: pointer;
+    }
 
-<nav>
-    <a class="t" href="/">Crypto</a>
-    <a href="/sobre">Sobre</a>
-    <div class="animation start-home"></div>
-</nav>
+    nav .animation {
+        position: absolute;
+        height: 100%;
+        top: 0;
+        z-index: 0;
+        transition: all .5s ease 0s;
+        border-radius: 8px;
+        pointer-events: none;
+        /* Ensure clicks pass through to the actual links */
+        background-color: transparent;
+        /* Transparent background */
+        color: transparent;
+        /* Transparent text color */
+    }
+
+    a:nth-child(1) {
+        width: 100px;
+    }
+
+    a:nth-child(2) {
+        width: 110px;
+    }
+
+    nav .start-home {
+        width: 100px;
+        left: 0;
+    }
+
+    nav .start-about {
+        width: 110px;
+        left: 100px;
+    }
+</style>
+</head>
+
+<body>
+
+    <nav>
+        <a class="t" href="/">Crypto</a>
+        <a href="/sobre">Sobre</a>
+        <div class="animation start-home"></div>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var currentPath = window.location.pathname;
+            var links = document.querySelectorAll('nav a');
+            var animation = document.querySelector('.animation');
+
+            links.forEach(function (link) {
+                link.classList.remove('active');
+
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                    animation.style.width = link.offsetWidth + 'px';
+                    animation.style.left = link.offsetLeft + 'px';
+                    animation.textContent = link.textContent.trim(); // Set text content
+                    animation.style.color = 'white'; // Set text color to match the active tab
+                    animation.style.backgroundColor = '#1abc9c'; // Set background color
+                }
+            });
+        });
+
+    </script>

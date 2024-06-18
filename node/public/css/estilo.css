@@ -47,81 +47,51 @@ body {
 	text-decoration: none;
 }
 
-
-nav {
-    margin: 27px auto 0;
-    
-    position: relative;
-    width: 590px;
-    height: 50px;
-    background-color: #2f3235;
-    border-radius: 1rem;
-    font-size: 0;
-}
-nav a {
-    line-height: 50px;
-    height: 100%;
-    font-size: 15px;
-    display: inline-block;
-    position: relative;
-    z-index: 1;
-    text-decoration: none;
-    text-transform: uppercase;
-    text-align: center;
-    color: white;
-    cursor: pointer;
-}
-nav .animation {
-    position: absolute;
-    height: 100%;
-    top: 0;	
-    z-index: 0;
-    transition: all .5s ease 0s;
-    border-radius: 8px;
-}
-a:nth-child(1) {
-    width: 100px;
-}
-a:nth-child(2) {
-    width: 110px;
-}
-a:nth-child(3) {
-    width: 100px;
-}
-a:nth-child(4) {
-    width: 160px;
-}
-a:nth-child(5) {
-    width: 120px;
-}
-nav .start-home, a:nth-child(1):hover~.animation {
-    width: 100px;
-    left: 0;
-    background-color: #1abc9c;
-}
-nav .start-about, a:nth-child(2):hover~.animation {
-    width: 110px;
-    left: 100px;
-    background-color: #1abc9c;
-}
-nav .start-blog, a:nth-child(3):hover~.animation {
-    width: 100px;
-    left: 210px;
-    background-color: #1abc9c;
-}
-nav .start-portefolio, a:nth-child(4):hover~.animation {
-    width: 160px;
-    left: 310px;
-    background-color: #1abc9c;
-}
-nav .start-contact, a:nth-child(5):hover~.animation {
-    width: 120px;
-    left: 470px;
-    background-color: #1abc9c;
+img {
+	max-width: 100%;
 }
 
-/*
-.card {
-	background-color: rgba(255, 255, 255, 0.5);
+html, body {
+	font-size: 12px;
+    font-family: sans-serif;
+	/* Para fazer o rodapé ficar sempre na parte inferior da página ;) */
+	min-height: 100vh;
 }
-*/
+
+body {
+    background: #010911;
+	background-image: url(/public/img/bg.jpg);
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-attachment: fixed;
+	background-size: cover;
+}
+
+.limitador {
+	max-width: 1200px;
+	margin: 0px auto;
+
+	/* Para fazer o rodapé ficar sempre na parte inferior da página ;) */
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+
+	backdrop-filter: blur(20px);
+}
+
+.conteudo {
+	/* Para fazer o rodapé ficar sempre na parte inferior da página ;) */
+	flex: 1 1 auto;
+}
+
+.rodape {
+	text-align: center;
+	background-color: black;
+	padding: 2rem;
+}
+
+.link-rodape, .link-rodape:hover {
+	color: white;
+	text-decoration: none;
+}
